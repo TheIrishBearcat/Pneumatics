@@ -25,11 +25,11 @@ public class Pneumatics {
     }
 
     public void xBoxButtons() {
-        if (xBox.getAButton()) {
+        if (xBox.getAButtonPressed()) {
             ballKickOut();
         }
 
-        if (xBox.getBButton()) {
+        if (xBox.getBButtonPressed()) {
             ballTakeIn();
         }
     }
