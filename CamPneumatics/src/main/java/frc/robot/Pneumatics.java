@@ -32,7 +32,7 @@ public class Pneumatics {
 
     public void psiError() {
         if (compressorPSI() < 60.0) {
-            System.out.println("The robot called about our pressure level chief. He said this ain't it.");
+            System.out.println("The robot called about our pressure level. He said this ain't it chief.");
         }
     }
     
