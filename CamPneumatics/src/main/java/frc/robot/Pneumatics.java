@@ -8,6 +8,12 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Timer;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+/**
+ * @author Cam Clarke
+ * 
+ * <p> This code is for the pneumatic system for our robot's pistons </p>
+ */
+
 public class Pneumatics {
 
     DoubleSolenoid kickOut, takeIn;
@@ -16,6 +22,8 @@ public class Pneumatics {
     AnalogInput voltageReading;
     WPI_TalonSRX lTalonSRX, rTalonSRX;
     Timer kickTimer;
+
+    boolean isKickoutActivated;
 
     double speedL, speedR, sensorVoltage, psi;
 
