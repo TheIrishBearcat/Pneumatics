@@ -24,8 +24,8 @@ public class Pneumatics {
         mCompressor = new Compressor(Consts.compressorPort);
         xBox = new XboxController(Consts.xBoxPort);
         voltageReading = new AnalogInput(Consts.pressureLevelAnalogPin);
-        lTalonSRX = new WPI_TalonSRX(8);
-        rTalonSRX = new WPI_TalonSRX(7);
+        lTalonSRX = new WPI_TalonSRX(7);
+        rTalonSRX = new WPI_TalonSRX(8);
 
         configTalon(lTalonSRX);
         configTalon(rTalonSRX);
