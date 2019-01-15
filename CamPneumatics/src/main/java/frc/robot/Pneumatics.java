@@ -12,6 +12,7 @@ public class Pneumatics {
 
     public Pneumatics() {
         kickOut = new DoubleSolenoid(1, 2, 3);
+        takeIn = new DoubleSolenoid(0, 0, 1);
         mCompressor = new Compressor(Consts.compressorPort);
         xBox = new XboxController(Consts.xBoxPort);
     }
