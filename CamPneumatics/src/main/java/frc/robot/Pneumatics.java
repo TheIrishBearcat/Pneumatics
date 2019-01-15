@@ -1,7 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -22,10 +21,10 @@ public class Pneumatics {
     XboxController xBox;
     AnalogInput voltageReading;
     DigitalInput slideReversecheck;
-    WPI_TalonSRX lTalonSRX, rTalonSRX;
-    Timer kickoutTimer, pullTimer;
+    WPI_TalonSRX barMotor, pulleyMotor, launchMotor;
+    Timer kickoutTimer, pullInTimer;
 
-    boolean isKickoutActivated;
+    boolean isKickoutActivated, isRoutineRunning, isPullInActivated;
 
     double speedL, speedR, sensorVoltage, psi;
     int kickOutState;
@@ -37,22 +36,23 @@ public class Pneumatics {
         mCompressor = new Compressor(Consts.compressorPort);
         xBox = new XboxController(Consts.xBoxPort);
         voltageReading = new AnalogInput(Consts.pressureLevelAnalogPin);
-        lTalonSRX = new WPI_TalonSRX(8);
-        rTalonSRX = new WPI_TalonSRX(7);
 
         kickoutTimer = new Timer();
-        pullTimer = new Timer();
+        pullInTimer = new Timer();
 
         slideReversecheck = new DigitalInput(Consts.digitalInputPort);
 
         isKickoutActivated = false;
+        barMotor = new WPI_TalonSRX(0); //subject to change
+        pulleyMotor = new WPI_TalonSRX(1); //subject to change
+        launchMotor = new WPI_TalonSRX(2); //subject to change
 
-        configTalon(lTalonSRX);
-        configTalon(rTalonSRX);
-
-        rTalonSRX.set(com.ctre.phoenix.motorcontrol.ControlMode.Follower, 7);
-		lTalonSRX.setInverted(false);
-		rTalonSRX.setInverted(true);
+        configTalon(barMotor);
+        configTalon(pulleyMotor);
+        configTalon(launchMotor);
+        barMotor.setInverted(false);
+        pulleyMotor.setInverted(false);
+        launchMotor.setInverted(true);
     }
 
     public void configTalon(WPI_TalonSRX talon) {
@@ -63,7 +63,6 @@ public class Pneumatics {
 		talon.configAllowableClosedloopError(0, 0, Consts.timeOutMs);
 		talon.configNeutralDeadband(0.05, Consts.timeOutMs); 
 		talon.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
-		talon.setInverted(false);
 
 		// Peak current and duration must be exceeded before corrent limit is activated.
 		// When activated, current will be limited to continuous current.
@@ -98,46 +97,6 @@ public class Pneumatics {
             kickOutState = 1;
             isKickoutActivated = true;
             kickoutTimer.start();
-            lTalonSRX.set(1);
-        }
-    }
-
-    public void kickoutPeriodid() {
-        if (isKickoutActivated) {
-            switch(kickOutState) {
-                case 1:
-                    lTalonSRX.set(1);
-                    if (kickoutTimer.hasPeriodPassed(0.05)) {
-                        kickOutState = 2;
-                    }
-
-                    break;
-                case 2:
-                    //some method here for doing what we want
-                    lTalonSRX.set(1);
-
-                    if (kickoutTimer.hasPeriodPassed(1)) {
-                        kickOutState = 3;
-                    }
-
-                    break;
-                case 3:
-                    lTalonSRX.set(0);
-
-                    if (kickoutTimer.hasPeriodPassed(2)) {
-                        kickOutState = -1;
-                        isKickoutActivated = false;
-                        kickoutTimer.stop();
-                        System.out.print("isKickoutactivated boolean in case five");
-					    System.out.print(isKickoutActivated);
-                    }
-                    break;
-                default:
-                    System.out.print("WARNING kickout method caught exception");
-                    isKickoutActivated = false;
-                    stop();
-                    break;
-            }
         }
     }
 
@@ -150,18 +109,8 @@ public class Pneumatics {
         kickOut.set(DoubleSolenoid.Value.kForward);
     }
 
-    public void ballKickOutSpeedSet() {
-        speedR = xBox.getTriggerAxis(GenericHID.Hand.kRight);
-        rTalonSRX.set(speedR);
-    }
-
     public void ballTakeIn() {
         takeIn.set(DoubleSolenoid.Value.kReverse);
-    }
-
-    public void ballTakeInSetSpeed() {
-        speedL = xBox.getTriggerAxis(GenericHID.Hand.kLeft) * -1;
-        lTalonSRX.set(speedL);
     }
 
     public void xBoxButtons() {
@@ -175,6 +124,6 @@ public class Pneumatics {
     }
 
     public enum HatchState {
-        KICKOUT, KICKRETURN, PUSHOUT, PULLIN, NOTHING
+        KICKOUT, KICKRETURN, NOTHING
     }
 }
