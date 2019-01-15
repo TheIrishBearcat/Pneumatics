@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Timer;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Pneumatics {
@@ -14,6 +15,7 @@ public class Pneumatics {
     XboxController xBox;
     AnalogInput voltageReading;
     WPI_TalonSRX lTalonSRX, rTalonSRX;
+    Timer kickTimer;
 
     double speedL, speedR, sensorVoltage, psi;
 
@@ -24,8 +26,10 @@ public class Pneumatics {
         mCompressor = new Compressor(Consts.compressorPort);
         xBox = new XboxController(Consts.xBoxPort);
         voltageReading = new AnalogInput(Consts.pressureLevelAnalogPin);
-        lTalonSRX = new WPI_TalonSRX(7);
-        rTalonSRX = new WPI_TalonSRX(8);
+        lTalonSRX = new WPI_TalonSRX(8);
+        rTalonSRX = new WPI_TalonSRX(7);
+
+        kickTimer = new Timer();
 
         configTalon(lTalonSRX);
         configTalon(rTalonSRX);
@@ -66,7 +70,7 @@ public class Pneumatics {
             System.out.println("The robot called about our pressure level. He said this ain't it chief.");
         }
     }
-    
+
     public void analogSetup() {
         voltageReading.setOversampleBits(8);
 		voltageReading.setAverageBits(13);
@@ -100,7 +104,7 @@ public class Pneumatics {
         }
     }
 
-    public enum RobotState {
-        INTAKE, KICKOUT
+    public enum HatchState {
+        SLIDEFORWARD, SLIDEBACKWARD, STOP
     }
 }
