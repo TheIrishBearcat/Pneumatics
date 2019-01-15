@@ -12,7 +12,7 @@ public class Pneumatics {
     DoubleSolenoid kickOut, takeIn;
     Compressor mCompressor;
     XboxController xBox;
-    AnalogInput voltageReading; //this is for voltage
+    AnalogInput voltageReading;
     WPI_TalonSRX lTalonSRX, rTalonSRX;
 
     double speedL, speedR, sensorVoltage, psi;
@@ -24,8 +24,8 @@ public class Pneumatics {
         mCompressor = new Compressor(Consts.compressorPort);
         xBox = new XboxController(Consts.xBoxPort);
         voltageReading = new AnalogInput(Consts.pressureLevelAnalogPin);
-        lTalonSRX = new WPI_TalonSRX(7);
-        rTalonSRX = new WPI_TalonSRX(8);
+        lTalonSRX = new WPI_TalonSRX(8);
+        rTalonSRX = new WPI_TalonSRX(7);
 
         configTalon(lTalonSRX);
         configTalon(rTalonSRX);
@@ -78,7 +78,7 @@ public class Pneumatics {
 
     public void ballKickOutSpeedSet() {
         speedR = xBox.getTriggerAxis(GenericHID.Hand.kRight);
-        //add talon code for this later
+        rTalonSRX.set(speedR);
     }
 
     public void ballTakeIn() {
@@ -87,7 +87,7 @@ public class Pneumatics {
 
     public void ballTakeInSetSpeed() {
         speedL = xBox.getTriggerAxis(GenericHID.Hand.kLeft) * -1;
-        //add talon code for this later
+        lTalonSRX.set(speedL);
     }
 
     public void xBoxButtons() {
