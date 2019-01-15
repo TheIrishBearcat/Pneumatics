@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Pneumatics {
 
@@ -12,6 +13,7 @@ public class Pneumatics {
     Compressor mCompressor;
     XboxController xBox;
     AnalogInput voltageReading; //this is for voltage
+    WPI_TalonSRX lTalonSRX, rTalonSRX;
 
     double speedL, speedR, sensorVoltage, psi;
 
@@ -22,6 +24,35 @@ public class Pneumatics {
         mCompressor = new Compressor(Consts.compressorPort);
         xBox = new XboxController(Consts.xBoxPort);
         voltageReading = new AnalogInput(Consts.pressureLevelAnalogPin);
+        lTalonSRX = new WPI_TalonSRX(7);
+        rTalonSRX = new WPI_TalonSRX(8);
+
+        configTalon(lTalonSRX);
+        configTalon(rTalonSRX);
+
+        rTalonSRX.set(com.ctre.phoenix.motorcontrol.ControlMode.Follower, 7);
+		lTalonSRX.setInverted(false);
+		rTalonSRX.setInverted(true);
+    }
+
+    public void configTalon(WPI_TalonSRX talon) {
+        talon.configNominalOutputForward(0, Consts.timeOutMs);
+		talon.configNominalOutputReverse(0, Consts.timeOutMs);
+		talon.configPeakOutputForward(1, Consts.timeOutMs);
+		talon.configPeakOutputReverse(-1, Consts.timeOutMs);
+		talon.configAllowableClosedloopError(0, 0, Consts.timeOutMs);
+		talon.configNeutralDeadband(0.05, Consts.timeOutMs); 
+		talon.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
+		talon.setInverted(false);
+
+		// Peak current and duration must be exceeded before corrent limit is activated.
+		// When activated, current will be limited to continuous current.
+		// Set peak current params to 0 if desired behavior is to immediately
+		// current-limit.
+		talon.enableCurrentLimit(true);
+		talon.configContinuousCurrentLimit(30, Consts.timeOutMs); // Must be 5 amps or more
+		talon.configPeakCurrentLimit(30, Consts.timeOutMs); // 100 A
+		talon.configPeakCurrentDuration(200, Consts.timeOutMs); // 200 ms
     }
 
     public double compressorPSI() {
