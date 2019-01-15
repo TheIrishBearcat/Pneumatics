@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Timer;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -20,12 +21,14 @@ public class Pneumatics {
     Compressor mCompressor;
     XboxController xBox;
     AnalogInput voltageReading;
+    DigitalInput slideReversecheck;
     WPI_TalonSRX lTalonSRX, rTalonSRX;
-    Timer kickTimer;
+    Timer kickoutTimer, pullTimer;
 
     boolean isKickoutActivated;
 
     double speedL, speedR, sensorVoltage, psi;
+    int kickOutState;
 
     //definition of variables
     public Pneumatics() {
@@ -37,7 +40,12 @@ public class Pneumatics {
         lTalonSRX = new WPI_TalonSRX(8);
         rTalonSRX = new WPI_TalonSRX(7);
 
-        kickTimer = new Timer();
+        kickoutTimer = new Timer();
+        pullTimer = new Timer();
+
+        slideReversecheck = new DigitalInput(Consts.digitalInputPort);
+
+        isKickoutActivated = false;
 
         configTalon(lTalonSRX);
         configTalon(rTalonSRX);
@@ -84,6 +92,60 @@ public class Pneumatics {
 		voltageReading.setAverageBits(13);
     }
 
+    public void kickoutInit() {
+        if (!isKickoutActivated) {
+            kickoutTimer.reset();
+            kickOutState = 1;
+            isKickoutActivated = true;
+            kickoutTimer.start();
+            lTalonSRX.set(1);
+        }
+    }
+
+    public void kickoutPeriodid() {
+        if (isKickoutActivated) {
+            switch(kickOutState) {
+                case 1:
+                    lTalonSRX.set(1);
+                    if (kickoutTimer.hasPeriodPassed(0.05)) {
+                        kickOutState = 2;
+                    }
+
+                    break;
+                case 2:
+                    //some method here for doing what we want
+                    lTalonSRX.set(1);
+
+                    if (kickoutTimer.hasPeriodPassed(1)) {
+                        kickOutState = 3;
+                    }
+
+                    break;
+                case 3:
+                    lTalonSRX.set(0);
+
+                    if (kickoutTimer.hasPeriodPassed(2)) {
+                        kickOutState = -1;
+                        isKickoutActivated = false;
+                        kickoutTimer.stop();
+                        System.out.print("isKickoutactivated boolean in case five");
+					    System.out.print(isKickoutActivated);
+                    }
+                    break;
+                default:
+                    System.out.print("WARNING kickout method caught exception");
+                    isKickoutActivated = false;
+                    stop();
+                    break;
+            }
+        }
+    }
+
+    public void stop() {
+        kickOut.set(DoubleSolenoid.Value.kOff);
+        takeIn.set(DoubleSolenoid.Value.kOff);
+    }
+
     public void ballKickOut() {
         kickOut.set(DoubleSolenoid.Value.kForward);
     }
@@ -113,6 +175,6 @@ public class Pneumatics {
     }
 
     public enum HatchState {
-        SLIDEFORWARD, SLIDEBACKWARD, STOP
+        KICKOUT, KICKRETURN, PUSHOUT, PULLIN, NOTHING
     }
 }
