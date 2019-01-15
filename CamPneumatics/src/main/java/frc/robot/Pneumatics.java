@@ -99,4 +99,8 @@ public class Pneumatics {
             ballTakeIn();
         }
     }
+
+    public enum RobotState {
+        INTAKE, KICKOUT
+    }
 }
