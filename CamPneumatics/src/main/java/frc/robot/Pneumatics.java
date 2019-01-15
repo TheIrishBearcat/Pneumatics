@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Compressor;
 
@@ -21,8 +22,18 @@ public class Pneumatics {
         kickOut.set(DoubleSolenoid.Value.kForward);
     }
 
+    public void ballKickOutSpeedSet() {
+        double speedR = xBox.getTriggerAxis(GenericHID.Hand.kRight);
+        //add talon code for this later
+    }
+
     public void ballTakeIn() {
         takeIn.set(DoubleSolenoid.Value.kReverse);
+    }
+
+    public void ballTakeInSetSpeed() {
+        double speedL = xBox.getTriggerAxis(GenericHID.Hand.kLeft) * -1;
+        //add talon code for later
     }
 
     public void xBoxButtons() {
