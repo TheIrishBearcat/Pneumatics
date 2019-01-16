@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -16,7 +17,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Pneumatics {
 
-    DoubleSolenoid kickOut, takeIn;
+    DoubleSolenoid kickOut, takeIn; //We will need two more DS for unknown task
     Compressor mCompressor;
     XboxController xBox;
     AnalogInput voltageReading;
@@ -53,6 +54,9 @@ public class Pneumatics {
         barMotor.setInverted(false);
         pulleyMotor.setInverted(false);
         launchMotor.setInverted(true);
+
+        isKickoutActivated = false;
+        isPullInActivated = false;
     }
 
     public void configTalon(WPI_TalonSRX talon) {
@@ -105,29 +109,79 @@ public class Pneumatics {
         takeIn.set(DoubleSolenoid.Value.kOff);
     }
 
-    public void ballKickOut() {
+    public void hatchKickOut() {
         kickOut.set(DoubleSolenoid.Value.kForward);
     }
 
-    public void ballTakeIn() {
+    public void hatchTakeIn() {
         takeIn.set(DoubleSolenoid.Value.kReverse);
     }
 
-    public void xBoxButtons() {
-        if (xBox.getAButtonPressed()) {
-            ballKickOut();
+    public HatchState xBox() {
+        if (xBox.getPOV() != -1) {
+            return HatchState.MANUALMODE;
         }
 
-        if (xBox.getBButtonPressed()) {
-            ballTakeIn();
+        if (xBox.getAButton()) {
+            return HatchState.KICKOUT;
+        }
+
+        if (xBox.getBButton()) {
+            return HatchState.KICKRETURN;
+        }
+
+        else {
+            return HatchState.NOTHING;
         }
     }
 
-    public void hatchLaunch() {
-        
+    public void manualControl() {
+        isKickoutActivated = false;
+        isPullInActivated = false;
+
+        double angle = xBox.getPOV() * Math.PI / 180;
+        double slideControl = Math.sin(angle);
+
+        if (slideControl > 0) {
+            hatchKickOut();
+        }
+
+        else if (slideControl < 0) {
+            hatchTakeIn();
+        }
+
+        else {
+            stop();
+        }
+    }
+
+    public void hatchLaunchPeriodic() {
+        isRoutineRunning = isKickoutActivated || isPullInActivated;
+
+        hatchKickOut();
+        hatchTakeIn();
+
+        if (!isRoutineRunning || xBox.getPOV() != -1 || xBox.getBumper(GenericHID.Hand.kLeft) || xBox.getBumper(GenericHID.Hand.kRight) || xBox.getBackButton() || xBox.getStartButton()) {
+            switch (xBox()) {
+                case KICKOUT:
+                    isKickoutActivated = true;
+                    break;
+                case KICKRETURN:
+                    isPullInActivated = true;
+                    break;
+                case MANUALMODE:
+                    manualControl();
+                    break;
+                case NOTHING:
+                    stop();
+                    isKickoutActivated = false;
+                    isPullInActivated = false;
+                    break;
+            }
+        }
     }
 
     public enum HatchState {
-        KICKOUT, KICKRETURN, NOTHING
+        KICKOUT, KICKRETURN, NOTHING, MANUALMODE
     }
 }
