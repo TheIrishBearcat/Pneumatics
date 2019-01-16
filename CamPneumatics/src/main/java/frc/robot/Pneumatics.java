@@ -140,7 +140,7 @@ public class Pneumatics {
         isPullInActivated = false;
 
         double angle = xBox.getPOV() * Math.PI / 180;
-        double slideControl = Math.sin(angle);
+        double slideControl = Math.cos(angle);
 
         if (slideControl > 0) {
             hatchKickOut();
