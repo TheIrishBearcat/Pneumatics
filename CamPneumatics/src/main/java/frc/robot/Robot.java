@@ -23,7 +23,7 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  Pneumatics pneu = new Pneumatics();
+  Pneumatics_2018 pneu = new Pneumatics_2018();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -46,6 +46,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    pneu.diagnostics();
   }
 
   /**
@@ -87,7 +88,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    
+    pneu.camClampTest();
   }
 
   /**
