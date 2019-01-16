@@ -32,8 +32,8 @@ public class Pneumatics {
 
     //definition of variables
     public Pneumatics() {
-        kickOut = new DoubleSolenoid(1, 2, 3);
-        takeIn = new DoubleSolenoid(0, 0, 1);
+        kickOut = new DoubleSolenoid(1, 2, 3); //subject to change
+        takeIn = new DoubleSolenoid(0, 0, 1); //subject to change
         mCompressor = new Compressor(Consts.compressorPort);
         xBox = new XboxController(Consts.xBoxPort);
         voltageReading = new AnalogInput(Consts.pressureLevelAnalogPin);
