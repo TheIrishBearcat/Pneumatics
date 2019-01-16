@@ -1,10 +1,11 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.GenericHID;
 
 public class Pneumatics_2018 {
@@ -13,13 +14,20 @@ public class Pneumatics_2018 {
     XboxController xBox;
     DoubleSolenoid clamp;
     Compressor mainC;
+    AnalogInput pressureLevel;
 
     boolean isRoutineRunning;
+
+    double sensorV, psi;
 
     public Pneumatics_2018() {
         xBox = new XboxController(Consts.xBoxPort);
         leftMasterIntakeTalon = new WPI_TalonSRX(7);
         rightSlaveIntakeTalon = new WPI_TalonSRX(8);
+
+        pressureLevel = new AnalogInput(Consts.pressureLevelAnalogPin);
+        pressureLevel.setOversampleBits(8);
+		pressureLevel.setAverageBits(13);
 
         clamp = new DoubleSolenoid(0, 2, 3);
         mainC = new Compressor(0);
@@ -79,6 +87,25 @@ public class Pneumatics_2018 {
                     break;
             }
         }
+    }
+
+    public double compresorPSI() {
+		sensorV = pressureLevel.getVoltage();
+		psi = 250 * (sensorV / 5) - 25;
+		return Math.round(psi);
+	}
+
+    public void psiError() {
+        if (compresorPSI() < 60.0) {
+            System.out.println("The robot called about our pressure level. He said this ain't it chief.");
+        }
+    }
+
+    public void diagnostics() {
+        compresorPSI();
+        psiError();
+
+        SmartDashboard.putNumber("Compressor PSI", psi);
     }
 
     public PneumaticStates xBox() {
