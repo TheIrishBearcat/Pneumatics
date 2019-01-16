@@ -123,6 +123,10 @@ public class Pneumatics {
         }
     }
 
+    public void hatchLaunch() {
+        
+    }
+
     public enum HatchState {
         KICKOUT, KICKRETURN, NOTHING
     }
