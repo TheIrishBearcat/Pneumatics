@@ -18,7 +18,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Pneumatics {
 
-    DoubleSolenoid kickOut, takeIn; //We will need two more DS for unknown task
+    DoubleSolenoid kickCode; //We will need two more DS for unknown task
     Compressor mCompressor;
     XboxController xBox;
     AnalogInput voltageReading;
@@ -33,8 +33,7 @@ public class Pneumatics {
 
     //definition of variables
     public Pneumatics() {
-        kickOut = new DoubleSolenoid(1, 2, 3); //subject to change
-        takeIn = new DoubleSolenoid(0, 0, 1); //subject to change
+        kickCode = new DoubleSolenoid(1, 2, 3); //subject to change
         mCompressor = new Compressor(Consts.compressorPort);
         xBox = new XboxController(Consts.xBoxPort);
         voltageReading = new AnalogInput(Consts.pressureLevelAnalogPin);
@@ -111,16 +110,11 @@ public class Pneumatics {
     }
 
     public void stop() {
-        kickOut.set(DoubleSolenoid.Value.kOff);
-        takeIn.set(DoubleSolenoid.Value.kOff);
+        kickCode.set(DoubleSolenoid.Value.kOff);
     }
 
     public void hatchKickOut() {
-        kickOut.set(DoubleSolenoid.Value.kForward);
-    }
-
-    public void hatchTakeIn() {
-        takeIn.set(DoubleSolenoid.Value.kReverse);
+        kickCode.set(DoubleSolenoid.Value.kForward);
     }
 
     public HatchState xBox() {
@@ -153,7 +147,7 @@ public class Pneumatics {
         }
 
         else if (slideControl < 0) {
-            hatchTakeIn();
+            
         }
 
         else {
@@ -165,7 +159,6 @@ public class Pneumatics {
         isRoutineRunning = isKickoutActivated || isPullInActivated;
 
         hatchKickOut();
-        hatchTakeIn();
 
         if (!isRoutineRunning || xBox.getPOV() != -1 || xBox.getBumper(GenericHID.Hand.kLeft) || xBox.getBumper(GenericHID.Hand.kRight) || xBox.getBackButton() || xBox.getStartButton()) {
             switch (xBox()) {
