@@ -17,7 +17,6 @@ public class Pneumatics_2018 {
     AnalogInput pressureLevel;
 
     boolean isRoutineRunning;
-    boolean isButtonPressedTwice = false;
 
     double sensorV, psi;
 
@@ -105,12 +104,11 @@ public class Pneumatics_2018 {
     public PneumaticStates xBox() {
 
         if (xBox.getAButton()) {
-            isButtonPressedTwice = !isButtonPressedTwice;
-            return PneumaticStates.CLAMPCLOSE;
+            return PneumaticStates.CLAMPOPEN;
         }
 
-        else if (xBox.getAButton() && isButtonPressedTwice) {
-            return PneumaticStates.CLAMPOPEN;
+        else if (xBox.getBButton()) {
+            return PneumaticStates.CLAMPCLOSE;
         }
 
         else {
