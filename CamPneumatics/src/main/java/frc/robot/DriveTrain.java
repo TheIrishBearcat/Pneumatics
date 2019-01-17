@@ -24,8 +24,4 @@ public class DriveTrain {
     public PIDSourceType getPidSourceType() {
         return PIDSourceType.kDisplacement;
     }
-
-    public void setPidSourceType(PIDSourceType pidSource) {
-
-    }
 }
