@@ -96,15 +96,8 @@ public class Pneumatics_2018 {
 		return Math.round(psi);
 	}
 
-    public void psiError() {
-        if (compresorPSI() < 60.0) {
-            System.out.println("The robot called about our pressure level. He said this ain't it chief.");
-        }
-    }
-
     public void diagnostics() {
         compresorPSI();
-        psiError();
 
         SmartDashboard.putNumber("Compressor PSI", psi);
     }
