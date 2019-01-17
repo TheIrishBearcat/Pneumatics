@@ -107,7 +107,7 @@ public class Pneumatics_2018 {
             return PneumaticStates.CLAMPOPEN;
         }
 
-        else if (xBox.getBButton()) {
+        if (xBox.getBButton()) {
             return PneumaticStates.CLAMPCLOSE;
         }
 
