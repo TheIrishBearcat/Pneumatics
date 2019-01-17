@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /**
@@ -78,6 +79,11 @@ public class Pneumatics {
 		talon.configPeakCurrentDuration(200, Consts.timeOutMs); // 200 ms
     }
 
+    public void analogSetup() {
+        voltageReading.setOversampleBits(8);
+		voltageReading.setAverageBits(13);
+    }
+
     public double compressorPSI() {
         sensorVoltage = voltageReading.getVoltage();
         psi = 250 * (sensorVoltage / 5) - 25;
@@ -90,9 +96,9 @@ public class Pneumatics {
         }
     }
 
-    public void analogSetup() {
-        voltageReading.setOversampleBits(8);
-		voltageReading.setAverageBits(13);
+    public void robotDiagnostics() {
+        SmartDashboard.putNumber("Compressor PSI", psi);
+        SmartDashboard.putNumber("Kickout Stage", kickOutState);
     }
 
     public void kickoutInit() {
