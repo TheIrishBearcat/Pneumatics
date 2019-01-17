@@ -18,7 +18,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Pneumatics {
 
-    DoubleSolenoid kickCode; //We will need two more DS for unknown task
+    DoubleSolenoid kickPiston; //We will need two more DS for unknown task
     Compressor mCompressor;
     XboxController xBox;
     AnalogInput voltageReading;
@@ -33,7 +33,7 @@ public class Pneumatics {
 
     //definition of variables
     public Pneumatics() {
-        kickCode = new DoubleSolenoid(1, 2, 3); //subject to change
+        kickPiston = new DoubleSolenoid(1, 2, 3); //subject to change
         mCompressor = new Compressor(Consts.compressorPort);
         xBox = new XboxController(Consts.xBoxPort);
         voltageReading = new AnalogInput(Consts.pressureLevelAnalogPin);
@@ -110,11 +110,15 @@ public class Pneumatics {
     }
 
     public void stop() {
-        kickCode.set(DoubleSolenoid.Value.kOff);
+        kickPiston.set(DoubleSolenoid.Value.kOff);
     }
 
     public void hatchKickOut() {
-        kickCode.set(DoubleSolenoid.Value.kForward);
+        kickPiston.set(DoubleSolenoid.Value.kForward);
+    }
+
+    public void hatchTakeIn() {
+        kickPiston.set(DoubleSolenoid.Value.kReverse);
     }
 
     public HatchState xBox() {
