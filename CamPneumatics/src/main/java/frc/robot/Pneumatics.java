@@ -122,10 +122,7 @@ public class Pneumatics {
     }
 
     public HatchState xBox() {
-        if (xBox.getPOV() != -1) {
-            return HatchState.MANUALMODE;
-        }
-
+        
         if (xBox.getAButton()) {
             return HatchState.KICKOUT;
         }
@@ -136,26 +133,6 @@ public class Pneumatics {
 
         else {
             return HatchState.NOTHING;
-        }
-    }
-
-    public void manualControl() {
-        isKickoutActivated = false;
-        isPullInActivated = false;
-
-        double angle = xBox.getPOV() * Math.PI / 180;
-        double slideControl = Math.cos(angle);
-
-        if (slideControl > 0) {
-            hatchKickOut();
-        }
-
-        else if (slideControl < 0) {
-            
-        }
-
-        else {
-            stop();
         }
     }
 
@@ -172,9 +149,6 @@ public class Pneumatics {
                 case KICKRETURN:
                     isPullInActivated = true;
                     break;
-                case MANUALMODE:
-                    manualControl();
-                    break;
                 case NOTHING:
                     stop();
                     isKickoutActivated = false;
@@ -185,6 +159,6 @@ public class Pneumatics {
     }
 
     public enum HatchState {
-        KICKOUT, KICKRETURN, NOTHING, MANUALMODE
+        KICKOUT, KICKRETURN, NOTHING
     }
 }
