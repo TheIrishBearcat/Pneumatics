@@ -116,7 +116,7 @@ public class Pneumatics_2018 {
             return PneumaticStates.CLAMPCLOSE;
         }
 
-        else if (xBox.getBButton() && isButtonPressedTwice) {
+        else if (xBox.getAButton() && isButtonPressedTwice) {
             return PneumaticStates.CLAMPOPEN;
         }
 
