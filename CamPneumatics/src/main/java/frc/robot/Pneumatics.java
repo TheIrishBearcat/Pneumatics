@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,7 +21,6 @@ public class Pneumatics {
     Compressor mCompressor;
     XboxController xBox;
     AnalogInput voltageReading;
-    DigitalInput slideReversecheck;
     WPI_TalonSRX barMotor, pulleyMotor, launchMotor;
     Timer kickoutTimer, pullInTimer;
 
@@ -40,8 +38,6 @@ public class Pneumatics {
 
         kickoutTimer = new Timer();
         pullInTimer = new Timer();
-
-        slideReversecheck = new DigitalInput(Consts.digitalInputPort);
 
         isKickoutActivated = false;
         barMotor = new WPI_TalonSRX(0); //subject to change
