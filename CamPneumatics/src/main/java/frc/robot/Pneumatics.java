@@ -120,7 +120,7 @@ public class Pneumatics {
             return HatchState.KICKOUT;
         }
 
-        if (xBox.getBButton()) {
+        else if (xBox.getBButton()) {
             return HatchState.KICKRETURN;
         }
 
