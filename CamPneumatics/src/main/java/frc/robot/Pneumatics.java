@@ -26,7 +26,7 @@ public class Pneumatics {
     WPI_TalonSRX barMotor, pulleyMotor, launchMotor;
     Timer kickoutTimer, pullInTimer;
 
-    boolean isKickoutActivated, isRoutineRunning, isPullInActivated;
+    boolean isKickoutActivated, isPullInActivated, isRoutineRunning;
 
     double speedL, speedR, sensorVoltage, psi;
     int kickOutState;
