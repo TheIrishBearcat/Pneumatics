@@ -128,15 +128,15 @@ public class Pneumatics {
     public void hatchLaunchPeriodic() {
         isRoutineRunning = isKickoutActivated || isPullInActivated;
 
-        hatchKickOut();
-
         if (!isRoutineRunning || xBox.getPOV() != -1 || xBox.getBumper(GenericHID.Hand.kLeft) || xBox.getBumper(GenericHID.Hand.kRight) || xBox.getBackButton() || xBox.getStartButton()) {
             switch (xBox()) {
                 case KICKOUT:
                     isKickoutActivated = true;
+                    hatchKickOut();
                     break;
                 case KICKRETURN:
                     isPullInActivated = true;
+                    hatchTakeIn();
                     break;
                 case NOTHING:
                     stop();
