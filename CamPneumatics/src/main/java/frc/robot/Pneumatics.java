@@ -146,7 +146,7 @@ public class Pneumatics {
             }
         }
     }
-
+    
     public enum HatchState {
         KICKOUT, KICKRETURN, NOTHING
     }
