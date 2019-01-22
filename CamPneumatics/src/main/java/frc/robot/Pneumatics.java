@@ -131,12 +131,12 @@ public class Pneumatics {
         if (!isRoutineRunning || xBox.getPOV() != -1 || xBox.getBumper(GenericHID.Hand.kLeft) || xBox.getBumper(GenericHID.Hand.kRight) || xBox.getBackButton() || xBox.getStartButton()) {
             switch (xBox()) {
                 case KICKOUT:
-                    isKickoutActivated = true;
                     hatchKickOut();
+                    isKickoutActivated = true;
                     break;
                 case KICKRETURN:
-                    isPullInActivated = true;
                     hatchTakeIn();
+                    isPullInActivated = true;
                     break;
                 case NOTHING:
                     stop();
@@ -146,7 +146,7 @@ public class Pneumatics {
             }
         }
     }
-    
+
     public enum HatchState {
         KICKOUT, KICKRETURN, NOTHING
     }
