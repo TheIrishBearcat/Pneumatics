@@ -17,7 +17,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Pneumatics {
 
-    DoubleSolenoid kickPiston; //We will need two more DS for unknown task
+    DoubleSolenoid kickoutPiston, pullinPiston; //We will need two more DS for unknown task
     Compressor mCompressor;
     XboxController xBox;
     AnalogInput voltageReading;
@@ -31,7 +31,8 @@ public class Pneumatics {
 
     //definition of variables
     public Pneumatics() {
-        kickPiston = new DoubleSolenoid(1, 2, 3); //subject to change
+        kickoutPiston = new DoubleSolenoid(1, 2, 3); //subject to change
+        pullinPiston = new DoubleSolenoid(2, 3, 4); //subject to change
         mCompressor = new Compressor(Consts.compressorPort);
         xBox = new XboxController(Consts.xBoxPort);
         voltageReading = new AnalogInput(Consts.pressureLevelAnalogPin);
@@ -99,15 +100,26 @@ public class Pneumatics {
     }
 
     public void stop() {
-        kickPiston.set(DoubleSolenoid.Value.kOff);
+        kickoutPiston.set(DoubleSolenoid.Value.kOff);
+        pullinPiston.set(DoubleSolenoid.Value.kOff);
     }
 
     public void hatchKickOut() {
-        kickPiston.set(DoubleSolenoid.Value.kForward);
+        kickoutPiston.set(DoubleSolenoid.Value.kForward);
     }
 
     public void hatchTakeIn() {
-        kickPiston.set(DoubleSolenoid.Value.kReverse);
+        pullinPiston.set(DoubleSolenoid.Value.kReverse);
+    }
+
+    public void fPistonOutBPistonIn() {
+        hatchKickOut();
+        hatchTakeIn();
+    }
+
+    public void fPistonInBPistonOut() {
+        kickoutPiston.set(DoubleSolenoid.Value.kReverse);
+        pullinPiston.set(DoubleSolenoid.Value.kForward);
     }
 
     public HatchState xBox() {
@@ -118,6 +130,14 @@ public class Pneumatics {
 
         else if (xBox.getBButton()) {
             return HatchState.KICKRETURN;
+        }
+
+        else if (xBox.getBumperPressed(GenericHID.Hand.kRight)) {
+            return HatchState.DUALHATCHFORWARD;
+        }
+
+        else if (xBox.getBumperPressed(GenericHID.Hand.kLeft)) {
+            return HatchState.DUALHATCHBACKWARD;
         }
 
         else {
@@ -138,6 +158,12 @@ public class Pneumatics {
                     hatchTakeIn();
                     isPullInActivated = true;
                     break;
+                case DUALHATCHFORWARD:
+                    fPistonOutBPistonIn();
+                    break;
+                case DUALHATCHBACKWARD:
+                    fPistonOutBPistonIn();
+                    break;
                 case NOTHING:
                     stop();
                     isKickoutActivated = false;
@@ -148,6 +174,6 @@ public class Pneumatics {
     }
 
     public enum HatchState {
-        KICKOUT, KICKRETURN, NOTHING
+        KICKOUT, KICKRETURN, DUALHATCHFORWARD, DUALHATCHBACKWARD, NOTHING
     }
 }
