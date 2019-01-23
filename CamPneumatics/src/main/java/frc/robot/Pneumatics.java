@@ -64,11 +64,6 @@ public class Pneumatics {
 		talon.configAllowableClosedloopError(0, 0, Consts.timeOutMs);
 		talon.configNeutralDeadband(0.05, Consts.timeOutMs); 
 		talon.setNeutralMode(com.ctre.phoenix.motorcontrol.NeutralMode.Brake);
-
-		// Peak current and duration must be exceeded before corrent limit is activated.
-		// When activated, current will be limited to continuous current.
-		// Set peak current params to 0 if desired behavior is to immediately
-		// current-limit.
 		talon.enableCurrentLimit(true);
 		talon.configContinuousCurrentLimit(30, Consts.timeOutMs); // Must be 5 amps or more
 		talon.configPeakCurrentLimit(30, Consts.timeOutMs); // 100 A
@@ -112,14 +107,12 @@ public class Pneumatics {
         pullinPiston.set(DoubleSolenoid.Value.kReverse);
     }
 
-    public void fPistonOutBPistonIn() {
-        hatchKickOut();
-        hatchTakeIn();
+    public void pullinPistonForward() {
+        pullinPiston.set(DoubleSolenoid.Value.kForward);
     }
 
-    public void fPistonInBPistonOut() {
+    public void kickOutPistonBackward() {
         kickoutPiston.set(DoubleSolenoid.Value.kReverse);
-        pullinPiston.set(DoubleSolenoid.Value.kForward);
     }
 
     public HatchState xBox() {
@@ -159,10 +152,12 @@ public class Pneumatics {
                     isPullInActivated = true;
                     break;
                 case DUALHATCHFORWARD:
-                    fPistonOutBPistonIn();
+                    hatchKickOut();
+                    hatchTakeIn();
                     break;
                 case DUALHATCHBACKWARD:
-                    fPistonOutBPistonIn();
+                    kickOutPistonBackward();
+                    pullinPistonForward();
                     break;
                 case NOTHING:
                     stop();
